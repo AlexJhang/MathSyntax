@@ -3,7 +3,8 @@ from MathSyntax import toTree
 
 
 #formula = '(1+2) *114 + 10+2* (5+6) - sin0( -a_00) x_asd '
-formula = "3*2+4"
+#formula = "1 + 2 * ( 3 - 4 ) / 5"
+formula = "1+3*2+4"
 
 
 
