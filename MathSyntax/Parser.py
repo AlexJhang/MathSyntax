@@ -1,44 +1,13 @@
+import MathSyntax.Symbols as Symb
 from enum import Enum
-from os import truncate
 
-def isNum(c:str)->bool:
-    c_ord =  ord(c)
-    return c == '.' or ( c_ord>= 48 and c_ord<= 57)
-
-def isOper(c:str)->bool:
-    return c in "+-*/%<>()_^"
-
-def isEng(c:str)->bool:
-    c_ord =  ord(c)
-    return ( c_ord>= 65 and c_ord<= 90) or ( c_ord>= 97 and c_ord<= 122)
-
-Oper_list = ["+","-","*","/","%","<<",">>","(",")","^"]
-Oper_prio = {
-    ")" : 0,
-    "+" : 5, "-" : 5, 
-    "*" : 6, "/" : 6,
-    "(" : 100,
-}
-'''
-class OperNode:
-    def __init__(self, symb : str) -> None:
-        self.symb = symb
-
-'''
+from MathSyntax.Symbols import StNode
 
 class Enum_word(Enum):
     num = "num"
     oper = "oper"
-    name = "VarName"
+    var = "VarName"
     none = None
-
-
-class StNode:
-    def __init__(self, role : str, raw_argus : list) -> None:
-        self.raw_argus = raw_argus
-        self.role = role
-        self.argus = []
-
 
 def showError(line : str, pos : int, errMsg : str):
     print("[ERROR]")
@@ -58,44 +27,44 @@ def toTree(formular:str) -> list:
         addWord = True
 
         if mode == Enum_word.none:
-            if isNum(c):
+            if Symb.isNum(c):
                 mode = Enum_word.num
-            elif isOper(c):
+            elif Symb.isOper(c):
                 mode =Enum_word.oper
-            elif isEng(c):
-                mode = Enum_word.name
+            elif Symb.isEng(c):
+                mode = Enum_word.var
             else:
                 addWord = False
 
         elif mode == Enum_word.num:
-            if not isNum(c):
+            if not Symb.isNum(c):
                 pushWord = True
-                if isOper(c):
+                if Symb.isOper(c):
                     mode =Enum_word.oper
-                elif isEng(c):
-                    mode = Enum_word.name
+                elif Symb.isEng(c):
+                    mode = Enum_word.var
                 else:
                     mode = Enum_word.none
                     addWord = False
 
         elif mode == Enum_word.oper:
-            if not isOper(c):
+            if not Symb.isOper(c):
                 pushWord = True
-                if word not in Oper_list:
+                if word not in Symb.Oper_list:
                     showError(formular, i, "'"+word+"' is invalid operator")
                     #raise()
                     return True
-                if isNum(c):
+                if Symb.isNum(c):
                     mode = Enum_word.num
-                elif isEng(c):
-                    mode = Enum_word.name
+                elif Symb.isEng(c):
+                    mode = Enum_word.var
                 else:
                     mode = Enum_word.none
                     addWord = False
-        elif mode == Enum_word.name:
-            if not(isNum(c) or isEng(c) or c in "_"):
+        elif mode == Enum_word.var:
+            if not(Symb.isNum(c) or Symb.isEng(c) or c in "_"):
                 pushWord = True
-                if isOper(c):
+                if Symb.isOper(c):
                     mode = Enum_word.oper
                 else:
                     mode = Enum_word.none
@@ -141,7 +110,7 @@ def toTree(formular:str) -> list:
                         op_stack.pop()
                     break
                 #print(w)
-                if Oper_prio[op_stack[-1]] >= Oper_prio[w]:
+                if Symb.Oper_prio[op_stack[-1]] >= Symb.Oper_prio[w]:
                     proc()
                 else:
                     break
@@ -154,6 +123,7 @@ def toTree(formular:str) -> list:
     while len(op_stack) > 0 and len(w_stack) >= 2:
         proc()
     print(w_stack)
+    print("hello")
 
     return w_stack
 
