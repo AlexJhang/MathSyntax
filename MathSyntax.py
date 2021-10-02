@@ -14,10 +14,10 @@ def isEng(c:str)->bool:
 
 Oper_list = ["+","-","*","/","%","<<",">>","(",")","^"]
 Oper_prio = {
-    "(" : 0,
+    ")" : 0,
     "+" : 5, "-" : 5, 
     "*" : 6, "/" : 6,
-    ")" : 100,
+    "(" : 100,
 }
 '''
 class OperNode:
@@ -135,20 +135,23 @@ def toTree(formular:str) -> list:
         if ty == Enum_word.num:
             w_stack.append(w)
         elif ty == Enum_word.oper:
-            while len(op_stack)>0:
+            while len(op_stack) > 0 and len(w_stack) >= 2:
+                if op_stack[-1] == "(":
+                    if w == ")":
+                        op_stack.pop()
+                    break
                 #print(w)
-                if Oper_prio[op_stack[-1]] > Oper_prio[w]:
+                if Oper_prio[op_stack[-1]] >= Oper_prio[w]:
                     proc()
                 else:
                     break
-            op_stack.append(w)
+            if w != ")":
+                op_stack.append(w)
 
         #w_stack.append(w)
-    print(w_stack, op_stack)
+        print(w_stack, op_stack)
 
-    for _ in range(10):
-        if len(op_stack) <= 0 | len(w_stack) < 2:
-            break
+    while len(op_stack) > 0 and len(w_stack) >= 2:
         proc()
     print(w_stack)
 
