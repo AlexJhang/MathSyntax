@@ -4,9 +4,9 @@ from enum import Enum
 from MathSyntax.Symbols import StNode
 
 class Enum_word(Enum):
-    num = "num"
-    oper = "oper"
-    var = "VarName"
+    num = "num"      #e.g., 12 -3 5.6
+    oper = "oper"    #e.g., + - * ( )
+    var = "VarName"  #e.g., sin x x_1
     none = None
 
 def showError(line : str, pos : int, errMsg : str):
