@@ -15,6 +15,13 @@ def showError(line : str, pos : int, errMsg : str):
     print("\t"+" "*(pos-1)+"^")
     print("Error message : " + errMsg)
 
+class DivisionErr(Exception):
+    def __init__(self,msg):
+        self.message=msg
+   
+    def __str__(self):
+        return self.message
+
 def toTree(formular:str) -> list:
     #parse
     word = ""
@@ -129,8 +136,3 @@ def toTree(formular:str) -> list:
 
 def toNode(oper, arg1, arg2):
     return [oper, arg1, arg2]
-
-def init():
-    pass
-
-init()
