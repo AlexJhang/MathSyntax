@@ -79,9 +79,13 @@ def toTree(formular:str) -> list:
         if mode != None:
             parse_list.append(word)
             parse_ty_list.append(last_mode)
-        #[Todo] process '-', unary operator
         print(parse_list)
         print([repr(op) for op in parse_ty_list])
+    def postParse():
+        ''''process some special symbol'''
+        pass
+        #[TODO] '-' : unary operator
+        #[TODO] '*' : bypass '*', e.g., 5 * x = 5x
     def construct():
         '''construct tree'''
         #w_stack = []
@@ -123,7 +127,10 @@ def toTree(formular:str) -> list:
         print(id(w_stack),w_stack)
         print("hello")
 
+    # main
     parse()
+    postParse()
+
     construct()
     print('-',id(w_stack),w_stack)
     return w_stack[0]
