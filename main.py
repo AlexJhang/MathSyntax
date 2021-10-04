@@ -1,16 +1,15 @@
 import sys
-from MathSyntax import toTree
-
+from MathSyntax import toTree, compute
 
 #formula = '(1+2) *114 + 10+2* (5+6) - sin0( -a_00) x_asd '
 #formula = "1 + 2 * ( 3 - 4 ) / 5"
-formula = "1+3*2+4"
+formula = "1+ (3+.1) *2+4"
 
 
 
 if __name__ == "__main__":
     #print('hello')
-    toTree(formula)
+    print(compute(toTree(formula)))
     
 
     '''
@@ -21,8 +20,8 @@ if __name__ == "__main__":
 
 
     sys.exit(0)
+    # hi
     # Python code to demonstrate working of compile(). 
-    
     # Creating sample sourcecode to multiply two variables 
     # x and y. 
     srcCode = 'for i in range(5):\r\tprint("hello")'

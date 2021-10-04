@@ -1,1 +1,1 @@
-from MathSyntax.Parse import toTree
+from MathSyntax.Parser import toTree, compute
