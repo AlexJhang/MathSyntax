@@ -1,6 +1,5 @@
 import sys
-from MathSyntax import toTree
-
+from MathSyntax import toTree, compute
 
 #formula = '(1+2) *114 + 10+2* (5+6) - sin0( -a_00) x_asd '
 #formula = "1 + 2 * ( 3 - 4 ) / 5"
@@ -10,7 +9,7 @@ formula = "1+3*2+4"
 
 if __name__ == "__main__":
     #print('hello')
-    toTree(formula)
+    print(compute(toTree(formula)))
     
 
     '''
