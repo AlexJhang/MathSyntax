@@ -9,11 +9,6 @@ class Enum_word(Enum):
     var = "VarName"  #e.g., sin x x_1
     none = None
 
-def showError(line : str, pos : int, errMsg : str):
-    print("[ERROR]")
-    print("\t"+line)
-    print("\t"+" "*(pos-1)+"^")
-    print("Error message : " + errMsg)
 
 def toTree(formular:str) -> list:
     parse_list = []
@@ -48,12 +43,11 @@ def toTree(formular:str) -> list:
                         mode = Enum_word.none
                         addWord = False
             elif mode == Enum_word.oper:
+                #print('--',c)
                 if not Symb.isOper(c):
                     pushWord = True
                     if word not in Symb.Oper_list:
-                        showError(formular, i, "'"+word+"' is invalid operator")
-                        #raise()
-                        return True
+                        raise SyntaxError(formular, i, "'"+word+"' is invalid operator")
                     if Symb.isNum(c):
                         mode = Enum_word.num
                     elif Symb.isEng(c):
@@ -82,6 +76,11 @@ def toTree(formular:str) -> list:
         #[Todo] process '-', unary operator
         print(parse_list)
         print([repr(op) for op in parse_ty_list])
+    def checkWordInvalid():
+        for i,c in enumerate(formular):
+            if not ( Symb.isNum(c) or Symb.isEng(c) or Symb.isOper(c) or c == " "):
+                raise SyntaxError(formular, i, "")
+
     def postParse():
         ''''process some special symbol'''
         pass
@@ -103,7 +102,7 @@ def toTree(formular:str) -> list:
             w_stack.append(toNode(op, a1, a2))
 
         for w, ty in zip(parse_list, parse_ty_list) :
-            print(w, str(ty.name))
+            #print(w, str(ty.name))
             if ty == Enum_word.num:
                 w_stack.append(w)
             elif ty == Enum_word.oper:
@@ -121,19 +120,21 @@ def toTree(formular:str) -> list:
                     op_stack.append(w)
 
             #w_stack.append(w)
-            print(w_stack, op_stack)
+            #print(w_stack, op_stack)
 
         while len(op_stack) > 0 and len(w_stack) >= 2:
             proc()
-        print(id(w_stack),w_stack)
+        #print(id(w_stack),w_stack)
         print("hello")
 
-    # main
+    # main flow
+    checkWordInvalid()
     parse()
     postParse()
 
     construct()
-    print('-',id(w_stack),w_stack)
+    #print('-',id(w_stack),w_stack)
+    print(w_stack)
     return w_stack[0]
 
 def toNode(oper, arg1, arg2):
@@ -158,3 +159,16 @@ def compute(stn : list):
                 return a0 / a1       
     
     return com_f(stn)
+
+class SyntaxError(Exception):
+    def __init__(self, line : str, pos : int, errMsg : str):
+        self.line = line
+        self.pos = pos
+        self.errMsg = errMsg
+   
+    def __str__(self):
+        output = "\n\t"+self.line+'\n'
+        output += "\t"+" "*(self.pos-1)+"^\n"
+        if self.errMsg != "":
+            output += "Error message : " + self.errMsg + "\n"
+        return output
