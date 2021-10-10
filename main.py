@@ -2,15 +2,15 @@ import sys
 from MathSyntax import toTree, compute
 
 #formula = '(1+2) *114 + 10+2* (5+6) - sin0( -a_00) x_asd '
-formula = "11 +_ 9 "
-#formula = "1+3*2+4"
+#formula = "11 + 9 "
+formula = "1+3*2+4"
 
 
 
 if __name__ == "__main__":
     #print('hello')
-    #print(compute(toTree(formula)))
-    toTree(formula)
+    print(compute(toTree(formula)))
+    #toTree(formula)
     
 
     '''

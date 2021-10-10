@@ -1,7 +1,7 @@
 import MathSyntax.Symbols as Symb
 from enum import Enum
 
-from MathSyntax.Symbols import StNode
+from MathSyntax.Symbols import StNode, StNode_binaryOp
 
 class Enum_word(Enum):
     num = "num"      #e.g., 12 -3 5.6
@@ -15,7 +15,7 @@ def toTree(formular:str) -> list:
     parse_ty_list = []  
     w_stack = []
 
-    def parse():
+    def parseBinary():
         '''parse'''
         word = ""
         mode = Enum_word.none
@@ -47,7 +47,7 @@ def toTree(formular:str) -> list:
                 if not Symb.isOper(c):
                     pushWord = True
                     if word not in Symb.Oper_list:
-                        raise SyntaxError(formular, i, "'"+word+"' is invalid operator")
+                        raise SyntaxError(formular, i-1, "'"+word+"' is invalid operator")
                     if Symb.isNum(c):
                         mode = Enum_word.num
                     elif Symb.isEng(c):
@@ -73,13 +73,12 @@ def toTree(formular:str) -> list:
         if mode != None:
             parse_list.append(word)
             parse_ty_list.append(last_mode)
-        #[Todo] process '-', unary operator
         print(parse_list)
-        print([repr(op) for op in parse_ty_list])
+        #print([repr(op) for op in parse_ty_list])
     def checkWordInvalid():
         for i,c in enumerate(formular):
             if not ( Symb.isNum(c) or Symb.isEng(c) or Symb.isOper(c) or c == " "):
-                raise SyntaxError(formular, i, "")
+                raise SyntaxError(formular, i, f"'{c}' is an invalid char.")
 
     def postParse():
         ''''process some special symbol'''
@@ -125,29 +124,33 @@ def toTree(formular:str) -> list:
         while len(op_stack) > 0 and len(w_stack) >= 2:
             proc()
         #print(id(w_stack),w_stack)
-        print("hello")
+        print(w_stack[0])
 
     # main flow
     checkWordInvalid()
-    parse()
+    parseBinary()
     postParse()
 
     construct()
     #print('-',id(w_stack),w_stack)
-    print(w_stack)
+    #print(w_stack)
     return w_stack[0]
 
 def toNode(oper, arg1, arg2):
-    return [oper, arg1, arg2]
+    #return [oper, arg1, arg2]
+    return StNode_binaryOp(oper, arg1, arg2)
 
 def compute(stn : list):
 
     def com_f(stnn):
         print(stnn)
-        if type(stnn) != list:
-            #print(stnn)
+        #if type(stnn) != list:
+        if type(stnn) != StNode_binaryOp:
+            print(stnn, type(stnn))
             return eval(stnn)
         else:
+            return stnn.compute()
+            '''
             op, a0, a1 = stnn[0], com_f(stnn[1]), com_f(stnn[2])
             if op == '+':
                 return a0 + a1
@@ -157,6 +160,7 @@ def compute(stn : list):
                 return a0 * a1
             elif op == '/':
                 return a0 / a1       
+            '''
     
     return com_f(stn)
 
@@ -168,7 +172,7 @@ class SyntaxError(Exception):
    
     def __str__(self):
         output = "\n\t"+self.line+'\n'
-        output += "\t"+" "*(self.pos-1)+"^\n"
+        output += "\t"+" "*(self.pos)+"^\n"
         if self.errMsg != "":
             output += "Error message : " + self.errMsg + "\n"
         return output
