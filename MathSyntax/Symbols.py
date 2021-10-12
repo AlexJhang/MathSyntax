@@ -2,7 +2,6 @@
 
 import abc
 from enum import Enum
-from typing import List
 
 
 Oper_list = ["+","-","*","/","%","<<",">>","(",")","^"]
@@ -38,9 +37,10 @@ class StNode:
         var = 'var'
 
     def __init__(self, op : str, raw_argus : list) -> None:
-        #for a in raw_argus:
-        #    if type(a) != StNode:
-        #        raise TypeError
+        for i,a in enumerate(raw_argus):
+            #if type(a).IsSubclassOf(StNode):
+            if not isinstance(a, StNode):
+                raise TypeError(f"arg{i} ({a},{type(a)}) is not {StNode}.")
         self.type = None
         self.argus = raw_argus
         self.op = op
@@ -58,44 +58,51 @@ class StNode:
 
     #def compute(self):
     #    return self.oper_func()
+def create_binaryOp(op, a0, a1):
+    if not isinstance(a0, StNode):
+        a0 = StNode_num(a0)
+    if not isinstance(a1, StNode):
+        a1 = StNode_num(a1)
+    stn = StNode_binaryOp(op, a0, a1)
+    stn.oper_func = Oper_func[op]
+    return stn
 
 class StNode_binaryOp(StNode):
-    def __init__(self, op, a1, a2) -> None:
-        self.type = self.Enum_type.op
-        self.argus = [a1, a2]
-        self.op = op
+
+    def __init__(self, op, a0, a1) -> None:
+        super().__init__(op, [a0, a1])
+
+        #self.type = self.Enum_type.op
+        #self.argus = [a1, a2]
+        #self.op = op
 
         #if op in Oper_func:
         #    self.oper_func = lambda : Oper_func[op](eval(self.argus[0]), eval(self.argus[1]))
     def compute(self):
-        if self.op in Oper_func:
-            a1 = self.argus[0]
-            if type(a1) == StNode_binaryOp:
-                a1 = a1.compute()
-            if type(a1) == str:
-                a1 = eval(a1)
+        a0 = self.argus[0]
+        a1 = self.argus[1]
+        #print(a0, a1, sep=" ~ ")
+        return self.oper_func( a0.compute(), a1.compute())
 
-            a2 = self.argus[1]
-            if type(a2) == StNode_binaryOp:
-                a2 = a2.compute()
-            if type(a2) == str:
-                a2 = eval(a2)
-            return Oper_func[self.op]( a1, a2)
+
 class StNode_unaryOp(StNode):
     def __init__(self, op : str, a1 : str) -> None:
         self.type = self.Enum_type.op
         self.argus = [a1]
         self.op = op
 
-class StNode_var(StNode):
-    def __init__(self, argu : str) -> None:
+class StNode_num(StNode):
+    def __init__(self, argu) -> None:
         self.type = self.Enum_type.var
-        self.argus = [argu]
-        self.op = None
+        self.argu = argu
+        if type(self.argu) == str:
+            self.argu = eval(self.argu)
+        #self.op = None
 
     def __str__(self) -> str:
-        return str(self.raw_argus[0])
-
+        return str(self.argu)
+    def compute(self):
+        return self.argu
 if __name__ == '__main__':
-    stn = StNode('+',['1', StNode('-',[StNode_var('7'),'5'])])
+    stn = StNode('+',['1', StNode('-',[StNode_num('7'),'5'])])
     print(stn)
