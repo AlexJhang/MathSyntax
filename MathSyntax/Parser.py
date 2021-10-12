@@ -1,7 +1,7 @@
 import MathSyntax.Symbols as Symb
 from enum import Enum
-
 from MathSyntax.Symbols import StNode, StNode_binaryOp, create_binaryOp
+
 class Enum_word(Enum):
     num = "num"      #e.g., 12 -3 5.6
     oper = "oper"    #e.g., + - * ( )
@@ -135,10 +135,8 @@ def toTree(formular:str) -> list:
     #print(w_stack)
     return w_stack[0]
 
-def toNode(oper, arg1, arg2):
-    #return [oper, arg1, arg2]
-    #return StNode_binaryOp(oper, arg1, arg2)
-    return create_binaryOp(oper, arg1, arg2)
+def toNode(oper, arg0, arg1):
+    return create_binaryOp(oper, arg0, arg1)
 
 def compute(stn : list):
 
